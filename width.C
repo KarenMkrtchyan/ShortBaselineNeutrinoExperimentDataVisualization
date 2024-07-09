@@ -47,7 +47,7 @@ void width() {
     TCanvas *c1 = new TCanvas("c1", "Histograms", 800, 600); //needed so h can be properly selected later on
 
 for(int k =0; k<3; k++){//Draw param (do not ask why it didn't work being the 3rd loop in the nest)
-    for (int i = 0; i < 3; i++) { //TPC
+    for (int i = 0; i < 2; i++) { //TPC
         for (int j = 0; j < 3; j++) { //Plane         
             snprintf(formattedString, sizeof(formattedString), format, i, j); // for logical selection
             snprintf(formattedString2, sizeof(formattedString2), formatTitle, i, j); // For title
@@ -67,9 +67,11 @@ for(int k =0; k<3; k++){//Draw param (do not ask why it didn't work being the 3r
                     snprintf(name, sizeof(name), "%s_TPC%d_Plane%d", param.c_str(), i, j);
                     h->SetName(name);
                     h->SetTitle(formattedString2);
+                    h->GetYaxis()->SetRangeUser(0,350);
+                    h->GetXaxis()->SetRangeUser(0,15);
                     if(k==0){
                         h->GetXaxis()->SetTitle("Hit Width [ticks]");
-                         h->GetYaxis()->SetTitle("Hits");
+                        h->GetYaxis()->SetTitle("Hits");
                     }else if(k==1){
                         h->GetXaxis()->SetTitle("Amplitude [ADC]");
                         h->GetYaxis()->SetTitle("Hits");
