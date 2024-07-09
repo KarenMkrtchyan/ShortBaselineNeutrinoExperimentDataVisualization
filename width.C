@@ -1,11 +1,3 @@
-#include <TFile.h>
-#include <TDirectory.h>
-#include <TTree.h>
-#include <TH1.h>
-#include <TStyle.h>
-#include <cstdio>
-#include <iostream>
-
 void width() {
     // ROOT file name
     #define filename "Supp_Stage0_55.root"
@@ -41,22 +33,29 @@ void width() {
     }
 
     // Automate the plotting of each plane and TPC
-    const char *format = "TPC==%d && Plane==%d";
+    const char *format = "TPC==%d&&Plane==%d";
     const char *formatTitle = "TPC %d, Plane %d";
     char formattedString[100];
     char formattedString2[100];
+    string drawParam[]= {"Width", "Amplitude"};
+
 
     // Disable statistics box globally
     gStyle->SetOptStat(0);
+    TCanvas *c1 = new TCanvas("c1", "Width Histograms", 800, 600);
 
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             snprintf(formattedString, sizeof(formattedString), format, i, j);
             snprintf(formattedString2, sizeof(formattedString2), formatTitle, i, j); // For title
 
-            // Draw the histogram
-            tree->Draw("Width >> temp_hist", formattedString);
-            TH1 *h = (TH1*)gDirectory->Get("temp_hist");
+            for(int k =0; k<2; k++){
+            std::string param = drawParam[k];
+            std::string drawCommand = param + ">>htemp";
+            std::cout << "Drawing: " << drawCommand << " with selection: " << formattedString << std::endl;
+            
+            tree->Draw(drawCommand.c_str(), formattedString);
+            TH1 *h = (TH1*)gDirectory->Get("htemp");
 
             // Handle the case where h is NULL
             if (h) {
@@ -67,19 +66,16 @@ void width() {
                 h->GetXaxis()->SetTitle("Hit Width [ticks]");
                 h->GetYaxis()->SetTitle("Hits");
                 h->GetYaxis()->SetTitleOffset(1.3);
-
-                // Disable statistics box for this histogram
-                h->SetStats(0);
-
-                // Write the histogram to the output file
                 h->Write();
             } else {
                 std::cerr << "Warning: Histogram for TPC " << i << " Plane " << j << " not created (empty selection)." << std::endl;
             }
+
         }
     }
 
     // Close the files
     outputFile->Close();
     file->Close();
+    }
 }
