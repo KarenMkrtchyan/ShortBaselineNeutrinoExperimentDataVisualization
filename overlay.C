@@ -24,14 +24,15 @@ void overlay(){
         file->Close();
         return;
     }
-    int dataInt = data->Integral();
-    int simInt = sim->Integral();
-    int simModInt = simMod->Integral();
+    double dataInt = (double)data->Integral();
+    double simInt = sim->Integral();
+    double simModInt = simMod->Integral();
+    std::cout << dataInt/simInt << std::endl << dataInt/simModInt << std::endl;
     sim->Scale(dataInt/simInt);
     simMod->Scale(dataInt/simModInt);
 
 
-    auto hs = new THStack("hs", "Width; TPC=0 Plane=0");
+    auto hs = new THStack("hs", "Width TPC=0 Plane=0");
     hs->Add(data);
     simMod->SetLineColor(kGreen);
     hs->Add(simMod);
