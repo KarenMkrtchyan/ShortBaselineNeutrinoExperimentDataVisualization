@@ -24,13 +24,21 @@ void overlay(){
         file->Close();
         return;
     }
+    int dataInt = data->Integral();
+    int simInt = sim->Integral();
+    int simModInt = simMod->Integral();
+    sim->Scale(dataInt/simInt);
+    simMod->Scale(dataInt/simModInt);
 
-    auto hs = new THStack("hs", "");
+
+    auto hs = new THStack("hs", "Width; TPC=0 Plane=0");
     hs->Add(data);
-    simMod->SetFillColor(kGreen);
+    simMod->SetLineColor(kGreen);
     hs->Add(simMod);
-    sim->SetFillColor(kRed);
+    sim->SetLineColor(kRed);
     hs->Add(sim);
     auto cs = new TCanvas("cs", "cs", 10, 10, 700, 900);
-    hs->Draw();
+    hs->Draw("nostack");
+
+    #undef filename
 }

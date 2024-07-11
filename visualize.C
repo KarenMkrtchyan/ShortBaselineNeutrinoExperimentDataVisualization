@@ -23,7 +23,7 @@ void visualize() {
     char formattedString2[100];
 
     //needed for historgrams to merge together propely
-    int nbinsx = 10;
+    int nbinsx = 100;
     int xlow = 0;
     int xup = 15;
 
@@ -144,5 +144,4 @@ void visualize() {
         file->Close();
         outputFileReal->Close();
     }
-    
 }
