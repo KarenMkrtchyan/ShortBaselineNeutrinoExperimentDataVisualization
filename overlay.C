@@ -1,13 +1,13 @@
 void overlay() {
     // Input file
-    #define filename "out.root" //output of visualize.C
+    #define filename "combined.root" //output of visualize.C
     TFile *file = new TFile(filename, "READ");
     if (!file || file->IsZombie()) {
         std::cerr << "Error: Cannot open the file!" << std::endl;
         return;
     }
     // Output file
-    #define outFile "15.root" //make this match the direcotry used
+    #define outFile "overlayed.root" //make this match the direcotry used
     TFile *outputFile = new TFile(outFile, "RECREATE");
     if (!outputFile->IsOpen()) {
         std::cerr << "Error: Cannot create or open output file!" << std::endl;
@@ -49,11 +49,11 @@ void overlay() {
                     file->Close();
                     return;
                 }
-                //Normalizing histograms to the data file
+                //Normalizing histograms to the data file DO ONLY ONCE TO COMBINED HISTOGRAM
                 double dataInt = (double)data->Integral();
                 double simInt = sim->Integral();
                 double simModInt = simMod->Integral();
-                std::cout << dataInt/simInt << std::endl << dataInt/simModInt << std::endl;
+               // std::cout << dataInt/simInt << std::endl << dataInt/simModInt << std::endl;
                 sim->Scale(dataInt/simInt);
                 //sim->Sumw2(0); //removes the error bars to look like a normal histogram 
                 simMod->Scale(dataInt/simModInt);
@@ -78,6 +78,14 @@ void overlay() {
                     data->Draw("same");
                     legend->Draw();
 
+                    double goodnessOfFit = data->Chi2Test(sim, "UW");
+                    double goodnessOfFitMod = data->Chi2Test(simMod, "UW");
+
+                    char annotation[100];
+                    snprintf(annotation, sizeof(annotation), "P val sim:%lf\nmod sim:%lf", goodnessOfFit, goodnessOfFitMod); 
+                    std::cout << annotation << std::endl;
+                    // auto text = new TLatex(.1,.92,annotation);
+                    // text->Draw();
                     cs->Write();
                 }else{
                     cs->Divide(3,1);

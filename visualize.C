@@ -2,9 +2,9 @@ void visualize() {
     //--------------CHANGE FILE NAMES--------------//
     //tracks, modified tracks, data
     //execute this file from the user directory (karenm)
-    string files[] = {"1/Stage1_1_track/Supp_Stage1_1_track.root", 
-    "1/Stage1_Modified_1_track/Supp_Stage1_Modified_1_track.root", 
-    "1/data_run11971_EventBuilder2_art1_8_fstrmBNBMAJORITY_20240604T110842_20240605T045332-stage0_20240605T145439-stage1-e85f739b-b981-4a82-8514-d22c2565ba62_hitTTree_track/Supp_data_run11971_EventBuilder2_art1_8_fstrmBNBMAJORITY_20240604T110842_20240605T045332-stage0_20240605T145439-stage1-e85f739b-b981-4a82-8514-d22c2565ba62_hitTTree_track.root"};
+    string files[] = {"15/Stage1_15_track/Supp_Stage1_15_track.root", 
+    "15/Stage1_Modified_15_track/Supp_Stage1_Modified_15_track.root", 
+    "15/data_run11971_EventBuilder9_art1_33_fstrmBNBMAJORITY_20240605T142228_20240606T040954-stage0_20240607T000132-stage1-3d8ced9a-efa9-44e4-bec4-96c02037b64f_hitTTree_track/Supp_data_run11971_EventBuilder9_art1_33_fstrmBNBMAJORITY_20240605T142228_20240606T040954-stage0_20240607T000132-stage1-3d8ced9a-efa9-44e4-bec4-96c02037b64f_hitTTree_track.root"};
 
     //------------CHANGE OUTPUT FILE NAME------------------//
     //RECREATE will overwrite the file, use this the first time executing
@@ -52,7 +52,10 @@ void visualize() {
         // Dir names for different files are not the same
         //Unmodifed hits
         /*
-            gaushit...
+        gaushit1dTPCEE_MCStage0Var
+        gaushit1dTPCEW_MCStage0Var
+        gaushit1dTPCWE_MCStage0Var
+        gaushit1dTPCWW_MCStage0Var
         */
         //Modified hits
         /*
@@ -82,7 +85,7 @@ void visualize() {
        }
        //change directory into output file 
     //    gSystem->cd(outFile);
-       TFile *outputFileReal  = new TFile("out.root", "UPDATE"); //even Lisan Al Gaib doesn't know why this line is neccessary 
+       TFile *outputFileReal  = new TFile(outFile, "UPDATE"); //even Lisan Al Gaib doesn't know why this line is neccessary 
        for(int k =0; k<3; k++){ // Draw param 
            for (int i = 0; i < 2; i++) { // TPC
                for (int j = 0; j < 3; j++) { // Plane         
