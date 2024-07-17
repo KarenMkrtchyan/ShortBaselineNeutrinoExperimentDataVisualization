@@ -1,16 +1,34 @@
+#include <glob.h>
+
+std::string expandWildcard(const std::string& pattern) {
+    glob_t glob_result;
+    glob(pattern.c_str(), GLOB_TILDE, nullptr, &glob_result);
+    std::string file;
+    if (glob_result.gl_pathc > 0) {
+        file = std::string(glob_result.gl_pathv[0]); // Use the first match
+    }
+    globfree(&glob_result);
+    return file;
+}
+
 void visualize() {
-    //--------------CHANGE FILE NAMES--------------//
+
+   
+    std::string run = "999"; // Directory being visualized
+    const std::string outFile = "hist" + run + ".root"; //output file
+  
     //tracks, modified tracks, data
     //execute this file from the user directory (karenm)
-    string files[] = {"15/Stage1_15_track/Supp_Stage1_15_track.root", 
-    "15/Stage1_Modified_15_track/Supp_Stage1_Modified_15_track.root", 
-    "15/data_run11971_EventBuilder9_art1_33_fstrmBNBMAJORITY_20240605T142228_20240606T040954-stage0_20240607T000132-stage1-3d8ced9a-efa9-44e4-bec4-96c02037b64f_hitTTree_track/Supp_data_run11971_EventBuilder9_art1_33_fstrmBNBMAJORITY_20240605T142228_20240606T040954-stage0_20240607T000132-stage1-3d8ced9a-efa9-44e4-bec4-96c02037b64f_hitTTree_track.root"};
-
+    std::string files[3];
+    files[0] = run + "/Stage1_" + run + "_track/Supp_Stage1_" + run + "_track.root";
+    files[1] = run + "/Stage1_Modified_" + run + "_track/Supp_Stage1_Modified_" + run + "_track.root";
+    files[2] = expandWildcard(run + "/data_*_hitTTree_track/Supp_data_*.root");
+    // std::cout << files[2] << std::endl;
     //------------CHANGE OUTPUT FILE NAME------------------//
     //RECREATE will overwrite the file, use this the first time executing
     //UPDATE will add on to the file, use this ever subsequent run 
-    #define outFile "out.root"
-    TFile *outputFile = new TFile(outFile, "RECREATE");
+    
+    TFile *outputFile = new TFile(outFile.c_str(), "RECREATE");
     if (!outputFile->IsOpen()) {
         std::cerr << "Error: Cannot create or open output file!" << std::endl;
         return;
@@ -83,9 +101,8 @@ void visualize() {
             return;
         }
        }
-       //change directory into output file 
-    //    gSystem->cd(outFile);
-       TFile *outputFileReal  = new TFile(outFile, "UPDATE"); //even Lisan Al Gaib doesn't know why this line is neccessary 
+
+       TFile *outputFileReal  = new TFile(outFile.c_str(), "UPDATE"); //even Lisan Al Gaib doesn't know why this line is neccessary 
        for(int k =0; k<3; k++){ // Draw param 
            for (int i = 0; i < 2; i++) { // TPC
                for (int j = 0; j < 3; j++) { // Plane         
@@ -123,18 +140,19 @@ void visualize() {
                            h->GetYaxis()->SetTitle("Hits");
                        }else{
                             if(l==0){ // tracks
-                           snprintf(name, sizeof(name), "Amplitude_Width_TPC%d_Plane%d",  i, j);
-                       }
-                       else if(l==1){ // modified tracks
-                           snprintf(name, sizeof(name), "MOD_Amplitude_Width_TPC%d_Plane%d",  i, j);
-                       }
-                       else{ // data tracks
-                           snprintf(name, sizeof(name), "DATA_Amplitude_Width_TPC%d_Plane%d",  i, j);
-                       }
-                           h->SetName(name);
-                           h->SetTitle(formattedString2);
-                           h->GetXaxis()->SetTitle("Hit Width [ticks]");
-                           h->GetYaxis()->SetTitle("Amplitude [ADC]"); 
+                                snprintf(name, sizeof(name), "Amplitude_Width_TPC%d_Plane%d",  i, j);
+                            }
+                            else if(l==1){ // modified tracks
+                                snprintf(name, sizeof(name), "MOD_Amplitude_Width_TPC%d_Plane%d",  i, j);
+                            }
+                            else{ // data tracks
+                                // std::cout<<"Data time\n";
+                                snprintf(name, sizeof(name), "DATA_Amplitude_Width_TPC%d_Plane%d",  i, j);
+                            }
+                                h->SetName(name);
+                                h->SetTitle(formattedString2);
+                                h->GetXaxis()->SetTitle("Hit Width [ticks]");
+                                h->GetYaxis()->SetTitle("Amplitude [ADC]"); 
                        }                      
                        h->GetYaxis()->SetTitleOffset(1.3);
                        // std::string newName = std::string(name)+".pdf";
@@ -149,5 +167,4 @@ void visualize() {
        file->Close();
        outputFileReal->Close();
    }
-   #undef outFile
 }
