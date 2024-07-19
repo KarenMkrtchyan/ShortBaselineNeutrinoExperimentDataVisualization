@@ -30,7 +30,7 @@ void overlay() {
                 snprintf(simModName, sizeof(simModName), "MOD_%s_TPC%d_Plane%d", drawParam[k].c_str(), j, i);
                 snprintf(dataName, sizeof(dataName), "DATA_%s_TPC%d_Plane%d", drawParam[k].c_str(), j, i);
 
-                std::cout << "Overlaying TPC" << i << " && Plane" << j <<" for " << drawParam[k] << std::endl;
+                std::cout << "Overlaying TPC" << j << " && Plane" << i <<" for " << drawParam[k] << std::endl;
                 TH1F *sim = (TH1F*)file->Get(simName);
                 if (!sim) {
                     std::cerr << "Error: Cannot find the histogram " << simName << std::endl;
@@ -78,11 +78,11 @@ void overlay() {
                     data->Draw("same");
                     legend->Draw();
 
-                    double goodnessOfFit = data->Chi2Test(sim, "UW");
-                    double goodnessOfFitMod = data->Chi2Test(simMod, "UW");
+                    long double goodnessOfFit = data->Chi2Test(sim, "UU NORM");
+                    long double goodnessOfFitMod = data->Chi2Test(simMod, "UU NORM");
 
                     char annotation[100];
-                    snprintf(annotation, sizeof(annotation), "P val sim:%lf\nmod sim:%lf", goodnessOfFit, goodnessOfFitMod); 
+                    snprintf(annotation, sizeof(annotation), "P val sim:%Lf\nmod sim:%Lf", goodnessOfFit, goodnessOfFitMod); 
                     std::cout << annotation << std::endl;
                     // auto text = new TLatex(.1,.92,annotation);
                     // text->Draw();
@@ -95,7 +95,6 @@ void overlay() {
                     simMod->Draw("colz");
                     cs->cd(3);
                     data->Draw("colz");
-
                     cs->Write();
                 }
             }
